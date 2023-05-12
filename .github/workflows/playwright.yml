@@ -41,3 +41,34 @@ jobs:
         path: playwright-report/
         retention-days: 30
 
+  merge-reports:
+    if: ${{ always() }}
+    needs: ["test (ubuntu-latest)", "test (windows-latest)"]
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - name: Set up Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download Blob Reports from Azure Blob Storage
+      run: |
+        az storage blob download-batch -d . -s '$web'  --pattern 'run-${{ github.run_id }}/*' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+
+    - name: Merge into HTML Report
+      run: |
+        npx playwright merge-reports --reporter html --attachments missing 'run-${{ github.run_id }}'
+
+    - name: Upload HTML Report to Azure Blob Storage
+      run: |
+        az storage blob upload-batch -s playwright-report -d '$web/run-${{ github.run_id }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+        echo "Report url: https://pwblobreport01.z1.web.core.windows.net/run-${{ github.run_id }}/index.html"
