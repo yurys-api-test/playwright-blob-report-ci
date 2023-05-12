@@ -43,7 +43,7 @@ jobs:
 
   merge-reports:
     if: ${{ always() }}
-    needs: [test-ubuntu-latest, test-windows-latest]
+    needs: [test (ubuntu-latest), test (windows-latest)]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
