@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import os from 'os';
 
 /**
  * Read environment variables from file.
@@ -30,7 +31,7 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: `chromium-${os.type()}`,
       use: { ...devices['Desktop Chrome'] },
     },
 
