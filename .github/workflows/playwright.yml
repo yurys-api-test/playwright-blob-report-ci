@@ -6,6 +6,11 @@ on:
     branches: [ main ]
 jobs:
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -39,7 +44,7 @@ jobs:
 
   merge-reports:
     if: ${{ always() }}
-    needs: [test]
+    needs: [test-ubuntu-latest, test-windows-latest]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
