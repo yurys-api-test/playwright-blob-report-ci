@@ -15,6 +15,8 @@ test('pw get started link', async ({ page }) => {
 
   // Expects the URL to contain intro.
   await expect(page).toHaveURL(/.*intro/);
+
+  await expect(page).toHaveTitle('Getting Started — Playwright', { timeout: 200 });
 });
 
 test('pw browser.launch doc', async ({ page }) => {
