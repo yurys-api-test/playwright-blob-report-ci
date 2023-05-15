@@ -4,12 +4,12 @@ test.beforeEach(async ({ page }) => {
   await page.goto('https://playwright.dev/');
 });
 
-test('pw has title', async ({ page }) => {
+test('another has title', async ({ page }) => {
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Playwright/);
 });
 
-test('pw get started link', async ({ page }) => {
+test('another get started link', async ({ page }) => {
   // Click the get started link.
   await page.getByRole('link', { name: 'Get started' }).click();
 
@@ -17,7 +17,7 @@ test('pw get started link', async ({ page }) => {
   await expect(page).toHaveURL(/.*intro/);
 });
 
-test('pw browser.launch doc', async ({ page }) => {
+test('another browser.launch doc', async ({ page }) => {
   await page.getByRole('link', { name: 'API', exact: true }).click();
   await page.getByRole('navigation', { name: 'Docs sidebar' }).getByRole('link', { name: 'Browser', exact: true }).click();
 
@@ -25,7 +25,7 @@ test('pw browser.launch doc', async ({ page }) => {
   await expect(page.getByText('Returns the browser instance.')).toBeVisible();
 });
 
-test('pw bug report link', async ({ page }) => {
+test('another bug report link', async ({ page }) => {
   await page.getByRole('link', { name: 'Playwright logo Playwright' }).click();
   await page.getByRole('link', { name: 'Community' }).click();
   const page1Promise = page.waitForEvent('popup');
