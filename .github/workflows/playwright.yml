@@ -68,7 +68,7 @@ jobs:
 
     - name: Merge into HTML Report
       run: |
-        npx playwright merge-reports --reporter html --attachments missing 'run-${{ github.run_id }}'
+        npx playwright merge-reports --reporter html --attachments missing blob-report
 
     - name: Upload HTML Report to Azure Blob Storage
       run: |
