@@ -34,7 +34,7 @@ jobs:
     - name: Upload artifact to Azure Blob Storage
       if: always()
       run: |
-        az storage blob upload-batch -s blob-report -d '$web/run-${{ github.run_id }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+        az storage blob upload-batch -s blob-report -d '$web/run-${{ github.run_id }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
 
   merge-reports:
     if: ${{ always() }}
