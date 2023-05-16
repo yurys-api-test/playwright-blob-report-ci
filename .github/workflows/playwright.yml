@@ -57,13 +57,13 @@ jobs:
 
     - name: Download Blob Reports from Azure Blob Storage
       run: |
-        az storage blob download-batch -d . -s '$web'  --pattern 'run-${{ github.run_id }}/*.jsonl' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+        az storage blob download-batch -d . -s '$web'  --pattern 'run-${{ github.run_id }}-${{ github.sha }}/*.jsonl' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
 
     - name: Merge into HTML Report
       run: |
-        npx playwright merge-reports --reporter html --attachments missing 'run-${{ github.run_id }}'
+        npx playwright merge-reports --reporter html --attachments missing 'run-${{ github.run_id }}-${{ github.sha }}'
 
     - name: Upload HTML Report to Azure Blob Storage
       run: |
-        az storage blob upload-batch -s playwright-report -d '$web/run-${{ github.run_id }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
-        echo "Report url: https://pwblobreport01.z1.web.core.windows.net/run-${{ github.run_id }}/index.html"
+        az storage blob upload-batch -s playwright-report -d '$web/run-${{ github.run_id }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+        echo "Report url: https://pwblobreport01.z1.web.core.windows.net/run-${{ github.run_id }}-${{ github.sha }}/index.html"
