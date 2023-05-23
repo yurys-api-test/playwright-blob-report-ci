@@ -1,26 +1,43 @@
-name: Comment PR
+name: Comment on PR
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+
 jobs:
   comment:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Leave comment
-      uses: actions/github-script@v5
-      with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '👋 Thanks for your pull request!'
-          })
+      - name: Get Pull Request
+        id: pr
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const prList = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`
+            });
+            if (prList.data.length !== 0) {
+              return prList.data[0].number
+            } else {
+              return 0
+            }
+
+      - name: Comment on PR
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const prNumber = ${{ steps.pr.outputs.result }};
+            if (prNumber !== 0) {
+              github.rest.issues.createComment({
+                issue_number: prNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '👋 Thanks for your pull request!'
+              });
+            }
