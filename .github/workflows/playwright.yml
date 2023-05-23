@@ -57,3 +57,15 @@ jobs:
       run: |
         az storage blob upload-batch -s playwright-report -d '$web/run-${{ github.run_id }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
         echo "Report url: https://pwblobreport01.z1.web.core.windows.net/run-${{ github.run_id }}-${{ github.sha }}/index.html"
+
+    - name: Leave comment
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: 'Report url: https://pwblobreport01.z1.web.core.windows.net/run-${{ github.run_id }}-${{ github.sha }}/index.html'
+          })
