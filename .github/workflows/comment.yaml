@@ -25,10 +25,10 @@ jobs:
               core.error('No pull request found for commit ' + context.sha);
               return;
             }
-            core.info('Adding comment to: ', prs[0].html_url);
+            core.info('Adding comment to: ' + prs[0].html_url);
             const { data: response } = await github.rest.issues.createComment({
               ...context.repo,
               issue_number: prs[0].number,
               body: 'Test comment ' + new Date(),
             });
-            core.info('Posted comment: ', response.html_url);
+            core.info('Posted comment: ' + response.html_url);
