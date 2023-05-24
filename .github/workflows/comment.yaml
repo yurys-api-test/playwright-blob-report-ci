@@ -21,9 +21,7 @@ jobs:
               repo: context.repo.repo,
               head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`
             })
-            console.log('result', JSON.stringify(prList, null, 2))
             if (prList.data.length !== 0) {
-              console.log('prList.data[0].number', prList.data[0].number)
               return prList.data[0].number
             } else {
               return 0
