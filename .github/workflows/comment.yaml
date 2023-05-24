@@ -21,10 +21,12 @@ jobs:
               repo: context.repo.repo,
               head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`
             });
+            console.log('prList', JSON.stringify(prList, null, 2));
             if (prList.data.length !== 0) {
-              return prList.data[0].number
+              console.log('prList.data[0].number', prList.data[0].number);
+              return prList.data[0].number;
             } else {
-              return 0
+              return 0;
             }
 
       - name: Comment on PR
@@ -34,10 +36,11 @@ jobs:
           script: |
             const prNumber = ${{ steps.pr.outputs.result }};
             if (prNumber !== 0) {
-              github.rest.issues.createComment({
+              const result = await github.rest.issues.createComment({
                 issue_number: prNumber,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: '👋 Thanks for your pull request!'
               });
+              console.log('result', JSON.stringify(result, null, 2));
             }
