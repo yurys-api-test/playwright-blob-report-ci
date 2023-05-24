@@ -29,6 +29,6 @@ jobs:
             const { data: response } = await github.rest.issues.createComment({
               ...context.repo,
               issue_number: prs[0].number,
-              body: 'Test comment ' + commit,
+              body: 'Test comment ' + new Date(),
             });
             core.info('Posted comment: ', response.html_url);
