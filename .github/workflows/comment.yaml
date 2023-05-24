@@ -22,7 +22,6 @@ jobs:
               head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`
             });
             console.log('prList', JSON.stringify(prList, null, 2));
-            const core = require('@actions/core');
             core.notice('prList.data.length = ' + prList.data.length)
             if (prList.data.length !== 0) {
               console.log('prList.data[0].number', prList.data[0].number);
