@@ -4,14 +4,14 @@ on:
   push:
 
 jobs:
-  example_comment_pr:
+  comment:
     runs-on: ubuntu-latest
-    name: An example job to comment a PR
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Comment PR
+      - name: Get Pull Request
+        id: pr
         uses: actions/github-script@v5
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -20,7 +20,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`
-            })
+            });
             if (prList.data.length !== 0) {
               return prList.data[0].number
             } else {
@@ -34,11 +34,10 @@ jobs:
           script: |
             const prNumber = ${{ steps.pr.outputs.result }};
             if (prNumber !== 0) {
-              const result = await github.rest.issues.createComment({
+              github.rest.issues.createComment({
                 issue_number: prNumber,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: '👋 Thanks for your pull request!'
-              })
-              console.log('result', JSON.stringify(result, null, 2))
+              });
             }
