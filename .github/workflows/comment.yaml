@@ -18,10 +18,8 @@ jobs:
             const commit = context.sha || '0a71a4f47c8b45bda6793a456b7dda069bb2b8eb';
             console.log('Commit: ', commit);
             console.log('context.repo: ', context.repo);
-            console.log('context.owner: ', context.owner);
             const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-              owner: context.repo,
-              repo: context.owner,
+              ...context.repo,
               commit_sha: commit,
             });
             if (prs.length === 0)
@@ -29,8 +27,7 @@ jobs:
             const prNumber = prs[0].number;
             console.log('PR number: ', prNumber);
             const resp = await github.rest.issues.createComment({
-              owner: context.repo,
-              repo: context.owner,
+              ...context.repo,
               issue_number: prNumber,
               body: 'Test comment ' + commit,
             });
