@@ -15,25 +15,22 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-            const commit = github.context.sha || '0a71a4f47c8b45bda6793a456b7dda069bb2b8eb';
-
+            const commit = context.sha || '0a71a4f47c8b45bda6793a456b7dda069bb2b8eb';
             console.log('Commit: ', commit);
-            console.log('github.context.repo: ', github.context.repo);
-            console.log('github.context.owner: ', github.context.owner);
-
-            const { data: prs } = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
-              owner: github.context.repo,
-              repo: github.context.owner,
+            console.log('context.repo: ', context.repo);
+            console.log('context.owner: ', context.owner);
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo,
+              repo: context.owner,
               commit_sha: commit,
             });
             if (prs.length === 0)
               core.error('No pull request found for commit');
             const prNumber = prs[0].number;
             console.log('PR number: ', prNumber);
-            const resp = await octokit.rest.issues.createComment({
-              owner: github.context.repo,
-              repo: github.context.owner,
+            const resp = await github.rest.issues.createComment({
+              owner: context.repo,
+              repo: context.owner,
               issue_number: prNumber,
               body: 'Test comment ' + commit,
             });
