@@ -17,20 +17,18 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const commit = context.sha || '0a71a4f47c8b45bda6793a456b7dda069bb2b8eb';
-            console.log('Commit: ', commit);
-            console.log('context.repo: ', context.repo);
             const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
               ...context.repo,
-              commit_sha: commit,
+              commit_sha: context.sha,
             });
-            if (prs.length === 0)
-              core.error('No pull request found for commit');
-            const prNumber = prs[0].number;
-            console.log('PR number: ', prNumber);
-            const resp = await github.rest.issues.createComment({
+            if (prs.length === 0) {
+              core.error('No pull request found for commit ' + context.sha);
+              return;
+            }
+            core.info('Adding comment to: ', prs[0].html_url);
+            const { data: response } = await github.rest.issues.createComment({
               ...context.repo,
-              issue_number: prNumber,
+              issue_number: prs[0].number,
               body: 'Test comment ' + commit,
             });
-            console.log(JSON.stringify(resp, null, 2));
+            core.info('Posted comment: ', response.html_url);
