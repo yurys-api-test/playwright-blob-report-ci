@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Check matrix param
-        run: echo "The matrix param is '${{ matrix.param }}' '${{ matrix.channel }}' ${{ 'The matrix channel is ' + (matrix.channel == '' ? 'empty' : 'not empty') }}, ${{ 'The matrix channel is ' + (matrix.channel ? 'empty' : 'not empty') }} "
+        run: echo "The matrix param is ${{ 'The matrix channel is ' + (matrix.channel == '' ? 'empty' : 'not empty') }}, ${{ 'The matrix channel is ' + (matrix.channel ? 'empty' : 'not empty') }} "
   comment:
     runs-on: ubuntu-latest
     permissions:
