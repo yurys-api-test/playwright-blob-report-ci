@@ -17,7 +17,7 @@ jobs:
       - name: Check matrix param
         run: echo "The matrix param is MY_VAR2=$MY_VAR2"
         env:
-          MY_VAR2: ${{ (matrix.channel && 'prefix' + matrix.channel) || 'empty' }}
+          MY_VAR2: ${{ (matrix.channel && format('prefix {0}', matrix.channel) || 'empty' }}
   comment:
     runs-on: ubuntu-latest
     permissions:
