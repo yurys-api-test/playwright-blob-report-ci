@@ -15,7 +15,10 @@ jobs:
 
     steps:
       - name: Check matrix param
-        run: echo "The matrix param is ${{ matrix.channel == '' ? 'empty' : 'not empty' }} "
+        run: echo "The matrix param is MY_VAR1=$MY_VAR1 MY_VAR2=$MY_VAR2"
+        env:
+          MY_VAR1: ${{ matrix.channel == '' ? 'empty' : 'not empty' }}
+          MY_VAR2: ${{ matrix.channel ? 'empty' : 'not empty' }}
   comment:
     runs-on: ubuntu-latest
     permissions:
