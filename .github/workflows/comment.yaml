@@ -4,6 +4,18 @@ on:
   push:
 
 jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        param: ['value1', 'value2']
+        include:
+          - param: value3
+            channel: chromium-tip-of-tree
+
+    steps:
+      - name: Check matrix param
+        run: echo "The matrix param is '${{ matrix.param }}' '${{ matrix.channel }}' ${{ 'The matrix channel is ' + (matrix.channel == '' ? 'empty' : 'not empty') }}, ${{ 'The matrix channel is ' + (matrix.channel ? 'empty' : 'not empty') }} "
   comment:
     runs-on: ubuntu-latest
     permissions:
