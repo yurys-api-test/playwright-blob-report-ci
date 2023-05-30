@@ -33,6 +33,8 @@ jobs:
 
   merge-reports:
     if: ${{ always() }}
+    permissions:
+      pull-requests: write
     needs: [test]
     timeout-minutes: 10
     runs-on: ubuntu-latest
