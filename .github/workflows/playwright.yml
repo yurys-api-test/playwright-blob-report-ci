@@ -26,13 +26,21 @@ jobs:
     - name: Run Playwright tests
       run: npx playwright test --shard ${{ matrix.shard }}
 
-    - name: Upload artifact to Azure Blob Storage
+    - name: Upload artifacts to Azure Blob Storage
       if: always()
       run: |
         az storage blob upload-batch -s blob-report -d '$web/run-${{ github.run_id }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
 
+    # On pull request first upload to artifacts, then download, merge and upload to azure in the priviledged workflow.
+    - uses: actions/upload-artifact@v3
+      if: always() && github.event_name == 'pull_request'
+      with:
+        name: blob-report
+        path: blob-report
+        retention-days: 30
+
   merge-reports:
-    if: ${{ always() }}
+    if: ${{ always() && github.event_name != 'pull_request' }}
     permissions:
       pull-requests: write
     needs: [test]
