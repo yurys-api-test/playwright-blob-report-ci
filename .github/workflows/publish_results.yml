@@ -2,8 +2,6 @@ name: Publish Test Results
 on:
   workflow_run:
     workflows: ["Playwright Tests"]
-    types:
-      - completed
 
 jobs:
   merge-reports:
