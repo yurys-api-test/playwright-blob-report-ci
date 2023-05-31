@@ -18,11 +18,29 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Download Blob Reports
-      uses: actions/download-artifact@v3
+    - name: Download blob report
+      uses: actions/github-script@v6
       with:
-        name: blob-report
-        path: blob-report
+        script: |
+          console.log(`downloading artifacts for ${context.payload.workflow_run.id}`);
+          const { data } = await github.rest.actions.listWorkflowRunArtifacts({
+            ...repo,
+            run_id: context.payload.workflow_run.id
+          });
+          console.log('total = ', data.total_count);
+          const name = 'blob-report';
+          const report = data.artifacts.filter(a => a.name === name)[0];
+          const result = await github.rest.actions.downloadArtifact({
+            ...repo,
+            artifact_id: report.id,
+            archive_format: 'zip'
+          });
+          console.log('download result', result);
+          const fs = require('fs');
+          fs.writeFileSync(`${name}.zip`, Buffer.from(result.data));
+
+    - name: Unzip blob report
+      run: unzip blob-report.zip -d blob-report
 
     - name: Merge into HTML Report
       run: |
