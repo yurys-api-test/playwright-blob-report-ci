@@ -25,4 +25,5 @@ runs:
           const fs = require('fs');
           fs.writeFileSync(`${name}.zip`, Buffer.from(result.data));
     - name: Unzip blob report
+      shell: bash
       run: unzip blob-report.zip -d blob-report
