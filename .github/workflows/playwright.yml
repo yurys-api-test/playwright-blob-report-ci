@@ -59,6 +59,7 @@ jobs:
       uses: ./.github/actions/download-blob-report-from-azure
       with:
         run_dir: 'run-${{ github.run_id }}-${{ github.sha }}'
+        connection_string: '${{ secrets.AZURE_CONNECTION_STRING }}'
 
     - name: Merge into HTML Report
       run: |
