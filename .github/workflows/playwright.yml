@@ -55,8 +55,7 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Download Blob Reports from Azure Blob Storage
-      uses: ./.github/actions/download-blob-report-from-azure
+    - uses: ./.github/actions/download-blob-report-from-azure
       with:
         run_dir: 'run-${{ github.run_id }}-${{ github.sha }}'
         connection_string: '${{ secrets.AZURE_CONNECTION_STRING }}'
