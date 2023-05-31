@@ -68,6 +68,9 @@ jobs:
               commit_sha: context.sha,
             });
             prs = data;
+          } else {
+            core.error('Unsupported workflow trigger event: ' + context.payload.workflow_run.event);
+            return;
           }
           if (prs.length === 0) {
             core.error('No pull request found for commit ' + context.sha + ' and workflow triggered by: ' + context.payload.workflow_run.event);
