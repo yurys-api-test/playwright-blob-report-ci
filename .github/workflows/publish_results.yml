@@ -23,7 +23,8 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          console.log(`downloading artifacts for ${context.payload.workflow_run.id}`);
+          console.log(`downloading artifacts for workflow_run: ${context.payload.workflow_run.id}`);
+          console.log(`workflow_run: ${JSON.stringify(context.payload.workflow_run, null, 2)}`);
           const { data } = await github.rest.actions.listWorkflowRunArtifacts({
             ...context.repo,
             run_id: context.payload.workflow_run.id
@@ -58,10 +59,14 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-            ...context.repo,
-            commit_sha: context.sha,
-          });
+          let prs = context.payload.workflow_run.pull_requests;
+          if (!prs.length) {
+            const { data } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              ...context.repo,
+              commit_sha: context.sha,
+            });
+            prs = data;
+          }
           if (prs.length === 0) {
             core.error('No pull request found for commit ' + context.sha);
             return;
