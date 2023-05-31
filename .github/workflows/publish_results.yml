@@ -2,7 +2,8 @@ name: Publish Test Results
 on:
   workflow_run:
     workflows: ["Playwright Tests"]
-
+    types:
+      - completed
 jobs:
   merge-reports:
     permissions:
@@ -24,14 +25,14 @@ jobs:
         script: |
           console.log(`downloading artifacts for ${context.payload.workflow_run.id}`);
           const { data } = await github.rest.actions.listWorkflowRunArtifacts({
-            ...repo,
+            ...context.repo,
             run_id: context.payload.workflow_run.id
           });
           console.log('total = ', data.total_count);
           const name = 'blob-report';
           const report = data.artifacts.filter(a => a.name === name)[0];
           const result = await github.rest.actions.downloadArtifact({
-            ...repo,
+            ...context.repo,
             artifact_id: report.id,
             archive_format: 'zip'
           });
