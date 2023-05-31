@@ -20,7 +20,9 @@ jobs:
       run: npm ci
 
     - name: Download blob report
-      uses: ./.github/actions/download-blob-report-artifact
+      uses: ./.github/actions/download-artifact
+      with:
+        name: blob-report
 
     - name: Merge into HTML Report
       run: |

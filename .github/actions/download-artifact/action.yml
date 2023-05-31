@@ -1,5 +1,11 @@
 name: 'Download blob report'
 description: 'Download blob report from GitHub artifacts'
+inputs:
+  name:
+    description: 'Name of the artifact to download'
+    required: true
+    type: string
+    default: 'blob-report'
 runs:
   using: "composite"
   steps:
@@ -14,7 +20,7 @@ runs:
             run_id: context.payload.workflow_run.id
           });
           console.log('total = ', data.total_count);
-          const name = 'blob-report';
+          const name = '${{ inputs.name }}';
           const report = data.artifacts.filter(a => a.name === name)[0];
           const result = await github.rest.actions.downloadArtifact({
             ...context.repo,
@@ -26,4 +32,4 @@ runs:
           fs.writeFileSync(`${name}.zip`, Buffer.from(result.data));
     - name: Unzip blob report
       shell: bash
-      run: unzip blob-report.zip -d blob-report
+      run: unzip ${{ inputs.name }}.zip -d ${{ inputs.name }}
