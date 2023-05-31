@@ -59,8 +59,10 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          let prs = context.payload.workflow_run.pull_requests;
-          if (!prs.length) {
+          let prs = [];
+          if (context.payload.workflow_run.event === 'pull_request') {
+            prs = context.payload.workflow_run.pull_requests;
+          } else if (context.payload.workflow_run.event === 'push') {
             const { data } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
               ...context.repo,
               commit_sha: context.sha,
@@ -68,7 +70,7 @@ jobs:
             prs = data;
           }
           if (prs.length === 0) {
-            core.error('No pull request found for commit ' + context.sha);
+            core.error('No pull request found for commit ' + context.sha + ' and workflow triggered by: ' + context.payload.workflow_run.event);
             return;
           }
           const reportUrl = `https://pwblobreport01.z1.web.core.windows.net/run-pr-${{ github.run_id }}-${{ github.sha }}/index.html`;
