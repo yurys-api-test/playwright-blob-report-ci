@@ -25,15 +25,30 @@ jobs:
       with:
         name: 'blob-report'
 
+    - name: Download blob report from Azure
+      if: ${{ always() && github.event.workflow_run.event == 'push' }}
+      uses: ./.github/actions/download-blob-report-from-azure
+      with:
+        blob_prefix: 'run-${{ github.run_id }}-${{ github.sha }}'
+        output_dir: 'blob-report'
+        connection_string: '${{ secrets.AZURE_CONNECTION_STRING }}'
+
     - name: Merge into HTML Report
       run: |
         npx playwright merge-reports --reporter html --attachments missing blob-report
 
-    - name: Upload HTML Report to Azure Blob Storage
+    - name: Upload HTML report to Azure
       run: |
-        az storage blob upload-batch -s playwright-report -d '$web/run-pr-${{ github.run_id }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
-        az storage blob upload-batch -s blob-report -d '$web/run-pr-${{ github.run_id }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
-        echo "Report url: https://pwblobreport01.z1.web.core.windows.net/run-pr-${{ github.run_id }}-${{ github.sha }}/index.html"
+        REPORT_DIR='run-pr-${{ github.run_id }}-${{ github.sha }}'
+        az storage blob upload-batch -s playwright-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+        az storage blob upload-batch -s blob-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+        echo "Report url: https://pwblobreport01.z1.web.core.windows.net/$REPORT_DIR/index.html"
+
+    - name: Upload blob report to Azure
+      if: ${{ github.event.workflow_run.event == 'pull_request' }}
+      run: |
+        REPORT_DIR='run-pr-${{ github.run_id }}-${{ github.sha }}'
+        az storage blob upload-batch -s blob-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
 
     - name: Comment on PR
       uses: actions/github-script@v6
