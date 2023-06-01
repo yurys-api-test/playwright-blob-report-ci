@@ -39,3 +39,13 @@ jobs:
         name: blob-report-${{ github.run_attempt }}
         path: blob-report
         retention-days: 30
+
+    - name: Save the PR number in an artifact
+      if: always() && github.event_name == 'pull_request'
+      run: echo '${{ github.event.number }}' > pull_request_number.txt;
+    - name: Store pull request number
+      uses: actions/upload-artifact@v3
+      if: always() && github.event_name == 'pull_request'
+      with:
+        name: pull-request
+        path: pull_request_number.txt
