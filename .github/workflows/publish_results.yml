@@ -51,7 +51,6 @@ jobs:
         az storage blob upload-batch -s blob-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
 
     - name: Read pull request number
-      uses: actions/download-artifact@v3
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       uses: ./.github/actions/download-artifact
       with:
