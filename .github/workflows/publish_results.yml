@@ -23,7 +23,7 @@ jobs:
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       uses: ./.github/actions/download-artifact
       with:
-        name: 'blob-report-${{ github.run_attempt }}'
+        name: 'blob-report-${{ github.event.workflow_run.run_attempt }}'
         path: 'blob-report'
 
     - name: Download blob report from Azure
