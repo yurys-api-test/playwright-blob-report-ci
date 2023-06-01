@@ -23,7 +23,8 @@ jobs:
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       uses: ./.github/actions/download-artifact
       with:
-        name: 'blob-report'
+        name: 'blob-report-${{ github.run_attempt }}'
+        path: 'blob-report'
 
     - name: Download blob report from Azure
       if: ${{ always() && github.event.workflow_run.event == 'push' }}
@@ -71,7 +72,8 @@ jobs:
             core.error('No pull request found for commit ' + context.sha + ' and workflow triggered by: ' + context.payload.workflow_run.event);
             return;
           }
-          const reportUrl = `https://pwblobreport01.z1.web.core.windows.net/run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}/index.html`;
+          const reportDir = 'run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}';
+          const reportUrl = `https://pwblobreport01.z1.web.core.windows.net/${reportDir}/index.html`;
           core.notice('Report url: ' + reportUrl);
           const { data: response } = await github.rest.issues.createComment({
             ...context.repo,

@@ -6,6 +6,11 @@ inputs:
     required: true
     type: string
     default: 'blob-report'
+  path:
+    description: 'Directory with downloaded artifacts'
+    required: true
+    type: string
+    default: 'blob-report'
 runs:
   using: "composite"
   steps:
@@ -32,4 +37,4 @@ runs:
           fs.writeFileSync(`${name}.zip`, Buffer.from(result.data));
     - name: Unzip blob report
       shell: bash
-      run: unzip ${{ inputs.name }}.zip -d ${{ inputs.name }}
+      run: unzip ${{ inputs.name }}.zip -d ${{ inputs.path }}
