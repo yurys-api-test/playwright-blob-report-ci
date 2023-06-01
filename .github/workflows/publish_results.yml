@@ -74,6 +74,7 @@ jobs:
           if (context.payload.workflow_run.event === 'pull_request') {
             prs = context.payload.workflow_run.pull_requests;
             if (!prs) {
+              const fs = require('fs');
               prs = [parseInt(fs.readFileSync('pull_request_number.txt').toString())];
             }
           } else if (context.payload.workflow_run.event === 'push') {
