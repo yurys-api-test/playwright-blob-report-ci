@@ -42,8 +42,11 @@ jobs:
 
 
   - name: Save the PR number in an artifact
+    if: always() && github.event_name == 'pull_request'
     shell: bash
-    run: echo "${{ github.event.number }}" > pull_request_number.txt
+    run: |
+      echo "${{ github.event.number }}" > pull_request_number.txt
+      echo "${{ github.event.number }}"
   - name: Store pull request number
     uses: actions/upload-artifact@v3
     if: always() && github.event_name == 'pull_request'
