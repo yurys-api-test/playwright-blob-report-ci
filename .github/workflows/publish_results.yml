@@ -62,7 +62,7 @@ jobs:
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       run: |
         ls -l;
-        echo "Pull request number:] $(cat pull_request_number.txt)";
+        echo "Pull request number: $(cat pull_request_number.txt)";
 
     - name: Comment on PR
       uses: actions/github-script@v6
@@ -72,7 +72,7 @@ jobs:
           let prs = [];
           if (context.payload.workflow_run.event === 'pull_request') {
             prs = context.payload.workflow_run.pull_requests;
-            if (!prs) {
+            if (!prs.length) {
               const fs = require('fs');
               prs = [parseInt(fs.readFileSync('pull_request_number.txt').toString())];
             }
