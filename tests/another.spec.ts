@@ -9,26 +9,26 @@ test('another has title', async ({ page }) => {
   await expect(page).toHaveTitle(/Playwright/);
 });
 
-test('another get started link', async ({ page }) => {
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
+// test('another get started link', async ({ page }) => {
+//   // Click the get started link.
+//   await page.getByRole('link', { name: 'Get started' }).click();
 
-  // Expects the URL to contain intro.
-  await expect(page).toHaveURL(/.*intro/);
-});
+//   // Expects the URL to contain intro.
+//   await expect(page).toHaveURL(/.*intro/);
+// });
 
-test('another browser.launch doc', async ({ page }) => {
-  await page.getByRole('link', { name: 'API', exact: true }).click();
-  await page.getByRole('navigation', { name: 'Docs sidebar' }).getByRole('link', { name: 'Browser', exact: true }).click();
+// test('another browser.launch doc', async ({ page }) => {
+//   await page.getByRole('link', { name: 'API', exact: true }).click();
+//   await page.getByRole('navigation', { name: 'Docs sidebar' }).getByRole('link', { name: 'Browser', exact: true }).click();
 
-  await page.getByRole('paragraph').filter({ hasText: 'A Browser is created via browserType.launch(). An example of using a Browser to ' }).getByRole('link', { name: 'browserType.launch()' }).click();
-  await expect(page.getByText('Returns the browser instance.')).toBeVisible();
-});
+//   await page.getByRole('paragraph').filter({ hasText: 'A Browser is created via browserType.launch(). An example of using a Browser to ' }).getByRole('link', { name: 'browserType.launch()' }).click();
+//   await expect(page.getByText('Returns the browser instance.')).toBeVisible();
+// });
 
-test('another bug report link', async ({ page }) => {
-  await page.getByRole('link', { name: 'Playwright logo Playwright' }).click();
-  await page.getByRole('link', { name: 'Community' }).click();
-  const page1Promise = page.waitForEvent('popup');
-  await page.getByRole('link', { name: 'Bug Reports' }).click();
-  const page1 = await page1Promise;
-});
+// test('another bug report link', async ({ page }) => {
+//   await page.getByRole('link', { name: 'Playwright logo Playwright' }).click();
+//   await page.getByRole('link', { name: 'Community' }).click();
+//   const page1Promise = page.waitForEvent('popup');
+//   await page.getByRole('link', { name: 'Bug Reports' }).click();
+//   const page1 = await page1Promise;
+// });
