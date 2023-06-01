@@ -19,7 +19,8 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Download blob report
+    - name: Download blob report artifact
+      if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       uses: ./.github/actions/download-artifact
       with:
         name: blob-report
