@@ -23,7 +23,7 @@ jobs:
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       uses: ./.github/actions/download-artifact
       with:
-        name: blob-report
+        name: 'blob-report'
 
     - name: Merge into HTML Report
       run: |
