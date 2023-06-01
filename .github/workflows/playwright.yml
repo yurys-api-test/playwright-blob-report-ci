@@ -27,7 +27,7 @@ jobs:
       run: npx playwright test --shard ${{ matrix.shard }}
 
     - name: Upload artifacts to Azure Blob Storage
-      if: always()
+      if: always() && github.event_name == 'push'
       run: |
         az storage blob upload-batch -s blob-report -d '$web/run-${{ github.run_id }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
 
