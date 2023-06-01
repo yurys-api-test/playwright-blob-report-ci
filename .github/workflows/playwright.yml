@@ -29,7 +29,7 @@ jobs:
     - name: Upload artifacts to Azure Blob Storage
       if: always() && github.event_name == 'push'
       run: |
-        az storage blob upload-batch -s blob-report -d '$web/run-${{ github.run_id }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+        az storage blob upload-batch -s blob-report -d '$web/run-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
 
     # On pull request first upload to artifacts, then download, merge and upload to azure in the priviledged workflow.
     - uses: actions/upload-artifact@v3
