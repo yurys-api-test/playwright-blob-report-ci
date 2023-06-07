@@ -66,6 +66,8 @@ jobs:
           let prNumber;
           console.log('workflow_run', JSON.stringify(context.payload.workflow_run, null, 2));
 
+          console.log('github', JSON.stringify(github, null, 2));
+
           if (context.payload.workflow_run.event === 'pull_request') {
             const prs = context.payload.workflow_run.pull_requests;
             if (prs.length) {
@@ -102,14 +104,14 @@ jobs:
           if (context.payload.workflow_run.event === 'pull_request') {
             const check = await github.rest.checks.create({
               ...context.repo,
-              name: '${{ github.event.workflow_run.name }}',
+              name: 'Merge report (${{ github.event.workflow_run.name }})',
               head_sha: '${{ github.event.workflow_run.head_sha }}',
               status: 'completed',
               conclusion: 'success',
               details_url: reportUrl,
               output: {
-                title: 'Merge test results',
-                summary: 'Producing combined report: ' + reportUrl,
+                title: 'Merged test results',
+                summary: `Created [report](reportUrl). Merge [workflow run](github.workflow.html_url).`,
               }
             });
             console.log(JSON.stringify(check, null, 2));
