@@ -112,7 +112,7 @@ jobs:
               details_url: reportUrl,
               output: {
                 title: 'Merged test results',
-                summary: `Created [report](reportUrl). Merge [workflow run](${mergeWorkflowUrl}).`,
+                summary: `Created [report](${reportUrl}). Merge [workflow run](${mergeWorkflowUrl}).`,
               }
             });
             console.log(JSON.stringify(check, null, 2));
