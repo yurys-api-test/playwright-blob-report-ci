@@ -105,7 +105,7 @@ jobs:
           const check = await github.rest.checks.create({
             ...context.repo,
             name: 'Merge report (${{ github.event.workflow_run.name }})',
-            head_sha: '${{ github.event.workflow_run.head_sha }}' || '${{ github.sha }}',
+            head_sha: '${{ github.event.workflow_run.head_sha }}',
             status: 'completed',
             conclusion: 'success',
             details_url: reportUrl,
@@ -114,4 +114,4 @@ jobs:
               summary: `Created [report](${reportUrl}). Merge [workflow run](${mergeWorkflowUrl}).`,
             }
           });
-
+          console.log('Posted check: ', JSON.stringify(check, null, 2));
