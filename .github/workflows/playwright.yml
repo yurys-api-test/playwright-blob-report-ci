@@ -32,12 +32,16 @@ jobs:
         az storage blob upload-batch -s blob-report -d '$web/run-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
 
     # On pull request first upload to artifacts, then download, merge and upload to azure in the priviledged workflow.
+    - name: Zip blob report
+      if: always() && github.event_name == 'pull_request'
+      shell: bash
+      run: zip -r blob-report.zip blob-report
     - name: Upload blob report to GitHub
       uses: actions/upload-artifact@v3
       if: always() && github.event_name == 'pull_request'
       with:
-        name: blob-report-${{ github.run_attempt }}
-        path: blob-report
+        name: blob-report-${{ github.run_attempt }}.zip
+        path: blob-report.zip
         retention-days: 30
 
     - name: Write the pull request number in an file
