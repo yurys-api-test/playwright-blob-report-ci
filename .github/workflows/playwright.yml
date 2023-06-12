@@ -36,11 +36,11 @@ jobs:
       if: always() && github.event_name == 'pull_request'
       shell: bash
       run: zip -r blob-report.zip blob-report
-    - name: Upload blob report to GitHub
+    - name: Upload zipped blob report to GitHub
       uses: actions/upload-artifact@v3
       if: always() && github.event_name == 'pull_request'
       with:
-        name: blob-report-${{ github.run_attempt }}.zip
+        name: blob-report-${{ github.run_attempt }}
         path: blob-report.zip
         retention-days: 30
 

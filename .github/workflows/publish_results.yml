@@ -20,12 +20,11 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Download blob report artifact
+    - name: Download zipped blob report
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       uses: ./.github/actions/download-artifact
       with:
-        name: blob-report-${{ github.event.workflow_run.run_attempt }}.zip
-        path: blob-report.zip
+        name: blob-report-${{ github.event.workflow_run.run_attempt }}
     - name: Unzip blob report
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       shell: bash
