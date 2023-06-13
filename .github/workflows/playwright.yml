@@ -35,7 +35,12 @@ jobs:
     - name: Zip blob report
       if: always() && github.event_name == 'pull_request'
       shell: bash
-      run: zip -r blob-report.zip blob-report
+      run: |
+        if [[ "${{ runner.os }}" == "Windows" ]]; then
+          7z a blob-report.zip blob-report
+        else
+          zip -r blob-report.zip blob-report
+        fi
     - name: Upload zipped blob report to GitHub
       uses: actions/upload-artifact@v3
       if: always() && github.event_name == 'pull_request'
