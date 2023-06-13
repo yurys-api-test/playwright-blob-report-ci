@@ -28,12 +28,7 @@ jobs:
     - name: Unzip blob report
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       shell: bash
-      run: |
-        if [[ "${{ runner.os }}" == "Windows" ]]; then
-          7z e my-artifact.zip
-        else
-          unzip my-artifact.zip
-        fi
+      run: unzip blob-report.zip
     # - name: Download blob report from Azure
     #   if: ${{ always() && github.event.workflow_run.event == 'push' }}
     #   uses: ./.github/actions/download-blob-report-from-azure
