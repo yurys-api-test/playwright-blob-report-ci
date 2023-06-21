@@ -29,29 +29,33 @@ jobs:
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       shell: bash
       run: unzip blob-report.zip
-    # - name: Download blob report from Azure
-    #   if: ${{ always() && github.event.workflow_run.event == 'push' }}
-    #   uses: ./.github/actions/download-blob-report-from-azure
-    #   with:
-    #     blob_prefix: 'run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
-    #     output_dir: 'blob-report'
-    #     connection_string: '${{ secrets.AZURE_CONNECTION_STRING }}'
+    - name: Download blob report from Azure
+      if: ${{ always() && github.event.workflow_run.event == 'push' }}
+      uses: ./.github/actions/download-blob-report-from-azure
+      with:
+        blob_prefix: 'run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
+        output_dir: 'blob-report'
+        connection_string: '${{ secrets.AZURE_CONNECTION_STRING }}'
 
-    # - name: Merge into HTML Report
-    #   run: |
-    #     npx playwright merge-reports --reporter html --attachments missing blob-report
+    - name: Merge into HTML Report
+      run: |
+        npx playwright merge-reports --reporter html --attachments missing blob-report
 
-    # - name: Upload HTML report to Azure
-    #   run: |
-    #     REPORT_DIR='run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
-    #     az storage blob upload-batch -s playwright-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
-    #     echo "Report url: https://pwblobreport01.z1.web.core.windows.net/$REPORT_DIR/index.html"
+    - name: Merge into Markdown Report
+      run: |
+        npx playwright merge-reports --reporter markdown --attachments missing blob-report
 
-    # - name: Upload blob report to Azure
-    #   if: ${{ github.event.workflow_run.event == 'pull_request' }}
-    #   run: |
-    #     REPORT_DIR='run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
-    #     az storage blob upload-batch -s blob-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+    - name: Upload HTML report to Azure
+      run: |
+        REPORT_DIR='run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
+        az storage blob upload-batch -s playwright-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
+        echo "Report url: https://pwblobreport01.z1.web.core.windows.net/$REPORT_DIR/index.html"
+
+    - name: Upload blob report to Azure
+      if: ${{ github.event.workflow_run.event == 'pull_request' }}
+      run: |
+        REPORT_DIR='run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
+        az storage blob upload-batch -s blob-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
 
     - name: Read pull request number
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
@@ -65,6 +69,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
+          const fs = require('fs');
           let prNumber;
           console.log('workflow_run', JSON.stringify(context.payload.workflow_run, null, 2));
 
@@ -75,7 +80,6 @@ jobs:
             if (prs.length) {
               prNumber = prs[0].number;
             } else {
-              const fs = require('fs');
               prNumber = parseInt(fs.readFileSync('pull_request_number.txt').toString());
               console.log('Read pull request number from file: ' + prNumber);
             }
@@ -96,10 +100,19 @@ jobs:
           const reportDir = 'run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}';
           const reportUrl = `https://pwblobreport01.z1.web.core.windows.net/${reportDir}/index.html`;
           core.notice('Report url: ' + reportUrl);
+
+          const reportMd = await fs.promises.readFile('report.md', 'utf8');
+          const body = [
+            `### Test results: "${{ github.event.workflow_run.name }}"`,
+            reportMd,
+            '---',
+            `Full [html report](${reportUrl}).`
+          ].join('\n');
+
           const { data: response } = await github.rest.issues.createComment({
             ...context.repo,
             issue_number: prNumber,
-            body: `"${{ github.event.workflow_run.name }}" [report](${reportUrl}).`,
+            body,
           });
           core.info('Posted comment: ' + response.html_url);
 
