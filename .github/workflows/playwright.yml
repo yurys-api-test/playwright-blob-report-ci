@@ -31,7 +31,7 @@ jobs:
       uses: ./.github/actions/upload-blob-report
       with:
         report_dir: 'blob-report'
-        connection_string: '${{ secrets.AZURE_CONNECTION_STRING }}'
+        connection_string: '${{ secrets.AZURE_CONNECTION_STRING_FOR_BLOB_REPORT }}'
 
     - name: Write the pull request number in an file
       if: always() && github.event_name == 'pull_request'
