@@ -86,7 +86,7 @@ jobs:
               commit_sha: context.sha,
             });
             if (!data.length) {
-              core.infi(`No pull request found for commit ${context.sha}. Not publishing anything.` );
+              core.info(`No pull request found for commit ${context.sha}. Not publishing anything.`);
               return;
             }
             prNumber = data[0].number;
