@@ -9,8 +9,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        shard: [1/2]
+        os: [ubuntu-latest]
+        shard: [1/2, 2/2]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
@@ -26,28 +26,12 @@ jobs:
     - name: Run Playwright tests
       run: npx playwright test --shard ${{ matrix.shard }}
 
-    - name: Upload blob report to Azure
-      if: always() && github.event_name == 'push'
-      run: |
-        az storage blob upload-batch -s blob-report -d '$web/run-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}' --connection-string "${{ secrets.AZURE_CONNECTION_STRING }}"
-
-    # On pull request first upload to artifacts, then download, merge and upload to azure in the priviledged workflow.
-    - name: Zip blob report
-      if: always() && github.event_name == 'pull_request'
-      shell: bash
-      run: |
-        if [[ "${{ runner.os }}" == "Windows" ]]; then
-          7z a blob-report.zip blob-report
-        else
-          zip -r blob-report.zip blob-report
-        fi
-    - name: Upload zipped blob report to GitHub
-      uses: actions/upload-artifact@v3
-      if: always() && github.event_name == 'pull_request'
+    - name: Upload blob report
+      if: always()
+      uses: ./.github/actions/upload-blob-report
       with:
-        name: blob-report-${{ github.run_attempt }}
-        path: blob-report.zip
-        retention-days: 30
+        report_dir: 'blob-report'
+        connection_string: '${{ secrets.AZURE_CONNECTION_STRING }}'
 
     - name: Write the pull request number in an file
       if: always() && github.event_name == 'pull_request'
