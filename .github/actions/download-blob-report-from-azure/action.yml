@@ -20,12 +20,10 @@ runs:
     - name: Download Blob Reports from Azure Blob Storage
       shell: bash
       run: |
-        pwd
         OUTPUT_DIR='${{ inputs.output_dir }}'
         mkdir -p $OUTPUT_DIR
         LIST=$(az storage blob list -c '$web' --prefix ${{ inputs.blob_prefix }} --connection-string  "${{ inputs.connection_string }}")
-        echo "LIST: $LIST"
-        for name in $(echo $LIST | jq --raw-output '.[].name | select(test(".jsonl$"))');
+        for name in $(echo $LIST | jq --raw-output '.[].name | select(test("report-.*\\.zip$")');
         do
           az storage blob download -c '$web' --name $name -f $OUTPUT_DIR/$(basename $name) --connection-string  "${{ inputs.connection_string }}"
         done
