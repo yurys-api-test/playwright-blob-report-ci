@@ -20,6 +20,7 @@ runs:
     - name: Download Blob Reports from Azure Blob Storage
       shell: bash
       run: |
+        pwd
         OUTPUT_DIR='${{ inputs.output_dir }}'
         mkdir -p $OUTPUT_DIR
         LIST=$(az storage blob list -c '$web' --prefix ${{ inputs.blob_prefix }} --connection-string  "${{ inputs.connection_string }}")
