@@ -32,17 +32,3 @@ jobs:
       with:
         report_dir: 'blob-report'
         connection_string: '${{ secrets.AZURE_CONNECTION_STRING_FOR_BLOB_REPORT }}'
-
-  write-pull-request-number:
-    name: Write PR number
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-    - name: Write triggering pull request number in a file
-      shell: bash
-      run: echo '${{ github.event.number }}' > pull_request_number.txt;
-    - name: Upload artifact with the pull request number
-      uses: actions/upload-artifact@v3
-      with:
-        name: pull-request
-        path: pull_request_number.txt
