@@ -36,6 +36,7 @@ jobs:
   write-pull-request-number:
     name: Write PR number
     if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
     steps:
     - name: Write triggering pull request number in a file
       shell: bash
