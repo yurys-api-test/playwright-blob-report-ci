@@ -36,6 +36,7 @@ jobs:
   write-pull-request-number:
     name: Write PR number
     if: github.event_name == 'pull_request'
+    steps:
     - name: Write triggering pull request number in a file
       shell: bash
       run: echo '${{ github.event.number }}' > pull_request_number.txt;
