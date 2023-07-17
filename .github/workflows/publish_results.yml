@@ -99,7 +99,7 @@ jobs:
             return;
           }
           const reportDir = 'run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}';
-          const reportUrl = `https://pwblobreport01.z1.web.core.windows.net/${reportDir}/index.html`;
+          const reportUrl = `https://pwblobreport01.z1.web.core.windows.net/${reportDir}/index.html#?q=s%3Afailed%20s%3Aflaky`;
           core.notice('Report url: ' + reportUrl);
 
           const reportMd = await fs.promises.readFile('report.md', 'utf8');
