@@ -60,11 +60,10 @@ jobs:
 
     - name: Merge into HTML Report
       run: |
-        ls -l blob-report
         npx playwright merge-reports --reporter html blob-report
 
     - name: Upload HTML report
       uses: actions/upload-artifact@v3
       with:
-        name: playwright-report
-        path: html-report-${{ github.run_attempt }}
+        name: html-report-${{ github.run_attempt }}
+        path: playwright-report
