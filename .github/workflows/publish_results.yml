@@ -22,26 +22,14 @@ jobs:
       run: npm ci
 
     - name: Download blob report from GitHub artifacts
-      if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
       uses: ./.github/actions/download-artifact
       with:
         name: 'blob-report-${{ github.event.workflow_run.run_attempt }}'
         path: 'blob-report'
-    - name: Download blob report from Azure
-      if: ${{ always() && github.event.workflow_run.event == 'push' }}
-      uses: ./.github/actions/download-blob-report-from-azure
-      with:
-        blob_prefix: 'run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
-        output_dir: 'blob-report'
-        connection_string: '${{ secrets.AZURE_CONNECTION_STRING_FOR_BLOB_REPORT }}'
 
     - name: Merge into HTML Report
       run: |
-        npx playwright merge-reports --reporter html --attachments missing blob-report
-
-    - name: Merge into Markdown Report
-      run: |
-        npx playwright merge-reports --reporter markdown --attachments missing blob-report
+        npx playwright merge-reports --reporter markdown,html blob-report
 
     - name: Upload HTML report to Azure
       run: |
