@@ -35,7 +35,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: blob-report-${{ github.run_attempt }}
+        name: all-blob-reports
         path: blob-report
 
   merge-report:
@@ -55,12 +55,12 @@ jobs:
     - name: Download Blob Reports from Artifacts
       uses: actions/download-artifact@v3
       with:
-        name: blob-report-${{ github.run_attempt }}
-        path: blob-report
+        name: all-blob-reports
+        path: all-blob-reports
 
     - name: Merge into HTML Report
       run: |
-        npx playwright merge-reports --reporter html blob-report
+        npx playwright merge-reports --reporter html ./all-blob-reports
 
     - name: Upload HTML report
       uses: actions/upload-artifact@v3
