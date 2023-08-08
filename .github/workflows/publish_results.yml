@@ -30,10 +30,9 @@ jobs:
         npx playwright merge-reports --reporter markdown,html blob-report
 
     - name: Azure Login
-      run: |
-        azcopy login --service-principal --application-id "${{ secrets.AZURE_CLIENT_ID_FOR_BLOB_REPORT }}" --tenant-id "${{ secrets.AZURE_TENANT_ID_FOR_BLOB_REPORT }}"
-      env:
-        AZCOPY_SPA_CLIENT_SECRET: ${{ secrets.AZURE_CREDENTIALS_FOR_BLOB_REPORT }}
+      uses: azure/login@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
     - name: Upload HTML report to Azure
       run: |
