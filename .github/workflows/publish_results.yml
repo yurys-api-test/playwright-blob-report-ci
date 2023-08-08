@@ -29,17 +29,22 @@ jobs:
       run: |
         npx playwright merge-reports --reporter markdown,html blob-report
 
+    - name: Azure Login
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_FOR_BLOB_REPORT }}
+
     - name: Upload HTML report to Azure
       run: |
         REPORT_DIR='run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
-        az storage blob upload-batch -s playwright-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING_FOR_BLOB_REPORT }}"
+        azcopy cp --recursive "./playwright-report/*" "https://pwblobreport01.blob.core.windows.net/\$web/$REPORT_DIR"
         echo "Report url: https://pwblobreport01.z1.web.core.windows.net/$REPORT_DIR/index.html"
 
     - name: Upload blob report to Azure
       if: ${{ github.event.workflow_run.event == 'pull_request' }}
       run: |
         REPORT_DIR='run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
-        az storage blob upload-batch -s blob-report -d "\$web/$REPORT_DIR" --connection-string "${{ secrets.AZURE_CONNECTION_STRING_FOR_BLOB_REPORT }}"
+        azcopy cp --recursive "./blob-report/*" "https://pwblobreport01.blob.core.windows.net/\$web/$REPORT_DIR"
 
     - name: Read pull request number
       if: ${{ always() && github.event.workflow_run.event == 'pull_request' }}
