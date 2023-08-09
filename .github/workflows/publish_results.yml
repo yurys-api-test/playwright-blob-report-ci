@@ -18,6 +18,12 @@ jobs:
       with:
         node-version: 16
 
+    - name: Switch keyring session
+      run: |
+        keyctl show
+        keyctl session workaroundSession
+        keyctl show
+
     - name: Azure Login
       uses: azure/login@v1
       with:
