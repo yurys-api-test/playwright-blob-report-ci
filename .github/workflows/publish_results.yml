@@ -18,26 +18,16 @@ jobs:
       with:
         node-version: 16
 
-    - name: Switch keyring session
+    - name: Authenticate and Upload HTML report to Azure
       run: |
-        keyctl show
-        keyctl session workaroundSession
-        keyctl show
-
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: '${{ secrets.AZURE_CREDENTIALS }}'
-
-    - name: Upload HTML report to Azure
-      run: |
-        keyctl show
-
         REPORT_DIR='run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
         mkdir -p playwright-report
         echo "foo" > playwright-report/index.html
+        azcopy login --service-principal --application-id ${{ secrets.AZURE_CLIENT_ID }} --tenant-id ${{ secrets.AZURE_TENANT_ID }}
         azcopy cp --recursive "./playwright-report/*" "https://pwblobreport01.blob.core.windows.net/\$web/$REPORT_DIR"
         echo "Report url: https://pwblobreport01.z1.web.core.windows.net/$REPORT_DIR/index.html"
+      env:
+        AZCOPY_SPA_CLIENT_SECRET: '${{ secrets.AZURE_CLIENT_SECRET }}'
 
     - name: Install dependencies
       run: npm ci
