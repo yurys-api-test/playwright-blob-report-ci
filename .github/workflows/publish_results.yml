@@ -23,11 +23,13 @@ jobs:
         REPORT_DIR='run-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}-${{ github.sha }}'
         mkdir -p playwright-report
         echo "foo" > playwright-report/index.html
-        azcopy login --service-principal --application-id ${{ secrets.AZURE_CLIENT_ID }} --tenant-id ${{ secrets.AZURE_TENANT_ID }}
         azcopy cp --recursive "./playwright-report/*" "https://pwblobreport01.blob.core.windows.net/\$web/$REPORT_DIR"
         echo "Report url: https://pwblobreport01.z1.web.core.windows.net/$REPORT_DIR/index.html"
       env:
-        AZCOPY_SPA_CLIENT_SECRET: '${{ secrets.AZURE_CLIENT_SECRET }}'
+        AZCOPY_AUTO_LOGIN_TYPE: SPN
+        AZCOPY_SPA_APPLICATION_ID: '${{ secrets.AZCOPY_SPA_APPLICATION_ID }}'
+        AZCOPY_SPA_CLIENT_SECRET: '${{ secrets.AZCOPY_SPA_CLIENT_SECRET }}'
+        AZCOPY_TENANT_ID: '${{ secrets.AZCOPY_TENANT_ID }}'
 
     - name: Install dependencies
       run: npm ci
