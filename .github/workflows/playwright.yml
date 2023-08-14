@@ -14,8 +14,8 @@ jobs:
     steps:
     - name: Print notice
       run: |
-      REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
-      echo "::notice title=Report url::https://<ACCOUNT_NAME>.z1.web.core.windows.net/$REPORT_DIR/index.html"
+        REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
+        echo "::notice title=Report url::https://<ACCOUNT_NAME>.z1.web.core.windows.net/$REPORT_DIR/index.html"
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
