@@ -8,9 +8,9 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        fail-fast: false
         shard: [1/4, 2/4, 3/4, 4/4]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
@@ -38,7 +38,7 @@ jobs:
         name: all-blob-reports
         path: blob-report
 
-  merge-report:
+  merge-reports:
     if: always()
     needs: [test]
     runs-on: ubuntu-latest
