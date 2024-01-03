@@ -22,7 +22,7 @@ jobs:
     - name: Download blob report from GitHub artifacts
       uses: ./.github/actions/download-artifact
       with:
-        name: 'blob-report-${{ github.event.workflow_run.run_attempt }}'
+        name: 'blob-report'
         path: 'all-blob-reports'
 
     - name: Merge into HTML Report
