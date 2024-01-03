@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1/4, 2/4, 3/4, 4/4]
+        shard: [1/2, 2/2]
     runs-on: ubuntu-latest
     steps:
     - name: Print notice
@@ -33,6 +33,7 @@ jobs:
       uses: ./.github/actions/upload-blob-report
       with:
         report_dir: 'blob-report'
+        job_name: playwright-tests-${{ matrix.shard }}
         connection_string: '${{ secrets.AZURE_CONNECTION_STRING_FOR_BLOB_REPORT }}'
 
     - name: Upload blob report to Artifacts
@@ -50,16 +51,16 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 18
     - name: Install dependencies
       run: npm ci
       env:
         PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
     - name: Download Blob Reports from Artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
-        name: all-blob-reports
+        name: all-blob-reports-*
         path: all-blob-reports
 
     - name: Merge into HTML Report
@@ -67,7 +68,7 @@ jobs:
         npx playwright merge-reports --reporter html ./all-blob-reports
 
     - name: Upload HTML report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: html-report-${{ github.run_attempt }}
         path: playwright-report

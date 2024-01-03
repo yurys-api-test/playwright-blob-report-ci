@@ -26,15 +26,17 @@ runs:
           });
           console.log('total = ', data.total_count);
           const name = '${{ inputs.name }}';
-          const report = data.artifacts.filter(a => a.name === name)[0];
-          const result = await github.rest.actions.downloadArtifact({
-            ...context.repo,
-            artifact_id: report.id,
-            archive_format: 'zip'
-          });
-          console.log('download result', result);
-          const fs = require('fs');
-          fs.writeFileSync(`${name}.zip`, Buffer.from(result.data));
-    - name: Unzip artifact
+          const artifacts = data.artifacts.filter(a => a.name.startsWith(name));
+          for (const artifact of artifacts) {
+            const result = await github.rest.actions.downloadArtifact({
+              ...context.repo,
+              artifact_id: artifact.id,
+              archive_format: 'zip'
+            });
+            console.log('downloaded artifact', result);
+            const fs = require('fs');
+            fs.writeFileSync(`${artifact.name}.zip`, Buffer.from(result.data));
+          }
+    - name: Unzip artifacts
       shell: bash
-      run: unzip ${{ inputs.name }}.zip -d ${{ inputs.path }}
+      run: unzip ${{ inputs.name }}*.zip -d ${{ inputs.path }}
