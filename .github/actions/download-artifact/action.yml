@@ -26,6 +26,7 @@ runs:
           });
           console.log('total = ', data.total_count);
           const name = '${{ inputs.name }}';
+          console.log('data.artifacts = ', data.artifacts);
           const artifacts = data.artifacts.filter(a => a.name.startsWith(name));
           for (const artifact of artifacts) {
             const result = await github.rest.actions.downloadArtifact({
@@ -40,5 +41,6 @@ runs:
     - name: Unzip artifacts
       shell: bash
       run: |
+        ls -R
         unzip ${{ inputs.name }}*.zip -d ${{ inputs.path }}
         ls -R ${{ inputs.path }}
