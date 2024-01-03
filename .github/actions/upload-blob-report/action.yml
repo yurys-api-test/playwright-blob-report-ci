@@ -25,7 +25,7 @@ runs:
         REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}'
         az storage blob upload-batch -s "${{ inputs.report_dir }}" -d "\$web/$REPORT_DIR" --connection-string "${{ inputs.connection_string }}"
     - name: Upload blob report to GitHub
-      if: always() && github.event_name == 'pull_request'
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: blob-report-${{ inputs.job_name }}
