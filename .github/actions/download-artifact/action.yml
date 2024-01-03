@@ -39,4 +39,6 @@ runs:
           }
     - name: Unzip artifacts
       shell: bash
-      run: unzip ${{ inputs.name }}*.zip -d ${{ inputs.path }}
+      run: |
+        unzip ${{ inputs.name }}*.zip -d ${{ inputs.path }}
+        ls -R ${{ inputs.path }}

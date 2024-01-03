@@ -13,14 +13,10 @@ jobs:
         shardTotal: [2]
     runs-on: ubuntu-latest
     steps:
-    - name: Print notice
-      run: |
-        REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
-        echo "::notice title=Report url::https://<ACCOUNT_NAME>.z1.web.core.windows.net/$REPORT_DIR/index.html"
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 18
 
     - name: Install dependencies
       run: npm ci
@@ -29,7 +25,7 @@ jobs:
     - name: Run Playwright tests
       run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
-    - name: Upload blob report
+    - name: Upload blob report via action
       if: always()
       uses: ./.github/actions/upload-blob-report
       with:
@@ -37,11 +33,11 @@ jobs:
         job_name: playwright-tests-${{ matrix.shardIndex }}
         connection_string: '${{ secrets.AZURE_CONNECTION_STRING_FOR_BLOB_REPORT }}'
 
-    - name: Upload blob report to Artifacts
+    - name: Manually upload blob report to Artifacts
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: blob-report-${{ matrix.shardIndex }}
+        name: manual-blob-report-${{ matrix.shardIndex }}
         path: blob-report
 
   merge-reports:
@@ -62,7 +58,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: all-blob-reports
-        pattern: blob-report-*
+        pattern: manual-blob-report-*
         merge-multiple: true
 
     - name: Merge into HTML Report
@@ -72,5 +68,5 @@ jobs:
     - name: Upload HTML report
       uses: actions/upload-artifact@v4
       with:
-        name: html-report-${{ github.run_attempt }}
+        name: html-report-manual-${{ github.run_attempt }}
         path: playwright-report
