@@ -31,7 +31,6 @@ jobs:
       with:
         report_dir: 'blob-report'
         job_name: playwright-tests-${{ matrix.shardIndex }}
-        connection_string: '${{ secrets.AZURE_CONNECTION_STRING_FOR_BLOB_REPORT }}'
 
     - name: Manually upload blob report to Artifacts
       if: always()
