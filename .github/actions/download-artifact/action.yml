@@ -10,7 +10,7 @@ inputs:
     description: 'Directory with downloaded artifacts'
     required: true
     type: string
-    default: 'blob-report'
+    default: '.'
 runs:
   using: "composite"
   steps:
