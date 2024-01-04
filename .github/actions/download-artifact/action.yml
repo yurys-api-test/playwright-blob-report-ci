@@ -1,8 +1,8 @@
-name: 'Download artifact'
-description: 'Download artifact from GitHub'
+name: 'Download artifacts'
+description: 'Download artifacts from GitHub'
 inputs:
-  name:
-    description: 'Name of the artifact to download'
+  namePrefix:
+    description: 'Name prefix of the artifacts to download'
     required: true
     type: string
     default: 'blob-report'
@@ -10,7 +10,7 @@ inputs:
     description: 'Directory with downloaded artifacts'
     required: true
     type: string
-    default: '.'
+    default: 'blob-report'
 runs:
   using: "composite"
   steps:
@@ -27,8 +27,9 @@ runs:
             ...context.repo,
             run_id: context.payload.workflow_run.id
           });
-          const name = '${{ inputs.name }}';
-          const artifacts = data.artifacts.filter(a => a.name.startsWith(name));
+          console.log('total = ', data.total_count);
+          const name = '${{ inputs.namePrefix }}';
+          const artifacts = data.artifacts.filter(a => a.name.startsWith(namePrefix));
           const fs = require('fs');
           for (const artifact of artifacts) {
             const result = await github.rest.actions.downloadArtifact({
@@ -42,5 +43,5 @@ runs:
     - name: Unzip artifacts
       shell: bash
       run: |
-        unzip '${{ inputs.path }}/artifacts/*.zip' -d ${{ inputs.path }}
+        unzip -n '${{ inputs.path }}/artifacts/*.zip' -d ${{ inputs.path }}
         rm -rf '${{ inputs.path }}/artifacts'
