@@ -7,7 +7,7 @@ inputs:
     type: string
     default: 'test-results/blob-report'
   job_name:
-    description: 'Uniqye job name'
+    description: 'Unique job name'
     required: true
     type: string
     default: ''
@@ -27,7 +27,7 @@ runs:
       run: echo '${{ github.event.number }}' > pull_request_number.txt;
     - name: Upload artifact with the pull request number
       if: always() && github.event_name == 'pull_request'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pull-request
         path: pull_request_number.txt

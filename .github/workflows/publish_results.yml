@@ -42,6 +42,10 @@ jobs:
         name: 'pull-request'
         path: './'
 
+    - name: Print pull request number
+      run: |
+        cat pull_request_number.txt
+
     - name: Comment on PR
       uses: actions/github-script@v6
       with:
