@@ -14,7 +14,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Download artifact
+    - name: Create temp downloads dir
+      shell: bash
+      run: mkdir -p '${{ inputs.path }}/artifacts'
+    - name: Download artifacts
       uses: actions/github-script@v6
       with:
         script: |
@@ -24,10 +27,9 @@ runs:
             ...context.repo,
             run_id: context.payload.workflow_run.id
           });
-          console.log('total = ', data.total_count);
           const name = '${{ inputs.name }}';
-          console.log('data.artifacts = ', data.artifacts);
           const artifacts = data.artifacts.filter(a => a.name.startsWith(name));
+          const fs = require('fs');
           for (const artifact of artifacts) {
             const result = await github.rest.actions.downloadArtifact({
               ...context.repo,
@@ -35,12 +37,10 @@ runs:
               archive_format: 'zip'
             });
             console.log('downloaded artifact', result);
-            const fs = require('fs');
-            fs.writeFileSync(`${artifact.name}.zip`, Buffer.from(result.data));
+            fs.writeFileSync(`${{ inputs.path }}/artifacts/${artifact.name}.zip`, Buffer.from(result.data));
           }
     - name: Unzip artifacts
       shell: bash
       run: |
-        ls -R
-        unzip ${{ inputs.name }}*.zip -d ${{ inputs.path }}
-        ls -R ${{ inputs.path }}
+        unzip '${{ inputs.path }}/artifacts/*.zip' -d ${{ inputs.path }}
+        rm -rf '${{ inputs.path }}/artifacts'
